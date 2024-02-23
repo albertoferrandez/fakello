@@ -1,0 +1,8 @@
+{
+    "explorer.fileNesting.enabled": true,
+    "files.trimFinalNewlines": false,
+    "explorer.fileNesting.patterns": {
+        ".config.js": "config.js*",
+        ".env": ".env*"
+    }
+}
