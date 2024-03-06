@@ -10,10 +10,8 @@ export default function Header() {
   const [openForm, setOpenForm] = useState<boolean>()
 
   return (
-    <header
-      className="w-full flex justify-between items-center 
-      px-3 py-3 lg:px-5 lg:pl-3 bg-primary text-slate-300 
-      border-slate-300"
+    <header 
+      className="w-full flex justify-between items-center px-3 py-3 lg:px-5 lg:pl-3 bg-primary text-slate-300 border-slate-300"
       style={{ borderBottom: "1px solid hsla(211, 18%, 68%, 0.16)" }}
     >
       <div className="flex justify-between items-center gap-6">

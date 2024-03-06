@@ -5,8 +5,9 @@ interface State {
   project: IProject;
   createNewTable: (title: string, color: string) => void;
   deleteTable: (id: string) => void;
-  createNewList: (tableId: string, newList: List) => void
-  createNewTaskAtList: (listId: string, newTask: Tasks) => void
+  createNewList: (tableId: string, newList: List) => void;
+  createNewTaskAtList: (listId: string, newTask: Tasks) => void;
+  reorderLists: (tableId: string, newOrderLists: List[]) => void;
 }
 
 export const useTablesStore = create<State>((set) => ({
@@ -16,7 +17,20 @@ export const useTablesStore = create<State>((set) => ({
     bgColor: "#0c0",
     colorText: "#fff",
 
-    tables: [],
+    tables: [
+      {
+        id: "table-example-1",
+        nameTable: "Tu primera tabla",
+        lists: [
+          {
+            idList: "egifqwgGYE978373",
+            nameList: "Tu primera lista de tareas",
+            tasks: [],
+          },
+        ],
+        color: "#f44336",
+      },
+    ],
   },
 
   createNewTable: (titleTable, colorTable) =>
@@ -80,6 +94,26 @@ export const useTablesStore = create<State>((set) => ({
           ...table,
           lists: updatedLists,
         };
+      });
+
+      return {
+        project: {
+          ...state.project,
+          tables: updatedTables,
+        },
+      };
+    }),
+
+  reorderLists: (tableId: string, newOrderLists: List[]) =>
+    set((state) => {
+      const updatedTables = state.project.tables.map((table) => {
+        if (table.id === tableId) {
+          return {
+            ...table,
+            lists: newOrderLists,
+          };
+        }
+        return table;
       });
 
       return {

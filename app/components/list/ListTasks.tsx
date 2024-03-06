@@ -8,6 +8,7 @@ interface Props {
 }
 
 function ListTasks({list}: Props) {
+  
   return (
     <div
       className='flex flex-col gap-1 items-center'
@@ -16,6 +17,7 @@ function ListTasks({list}: Props) {
         <article
           key={el.idTask}
           className="bg-secondary rounded-md w-11/12 mt-1 mb-1"
+          id={el.idTask}
         >
           <div
             className="flex flex-row justify-between px-1 py-2 text-xs"

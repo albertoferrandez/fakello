@@ -1,5 +1,5 @@
-import React, { FormEvent, SetStateAction } from 'react'
-import Button from '../ui/Button'
+import React, { FormEvent, SetStateAction } from "react";
+import Button from "../ui/Button";
 
 interface Props {
   setOpenCreateList: (value: SetStateAction<boolean>) => void;
@@ -24,7 +24,7 @@ function ListCreatorItem({
       <form
         onSubmit={handleAddList}
         className={`absolute right-0 z-10 top-0 
-            origin-top-right bg-secondary rounded-lg shadow w-72
+            origin-top-right bg-secondary rounded-md shadow w-72
             py-2 px-4 overflow-hidden text-slate-300 flex flex-col
             ${openCreateList ? "visible" : "hidden"}`}
       >
@@ -58,4 +58,4 @@ function ListCreatorItem({
   );
 }
 
-export default ListCreatorItem
+export default ListCreatorItem;

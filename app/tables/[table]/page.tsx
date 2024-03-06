@@ -1,30 +1,33 @@
 "use client";
 
-import ListItem from "@/app/components/list/ListItem";
+import { useParams, redirect } from "next/navigation";
+import { FormEvent, useEffect, useId, useState } from "react";
 
 import { useTablesStore } from "@/app/store/tablesStore";
-
 import { ITables } from "@/app/types/project";
-import { useParams, redirect } from "next/navigation";
-import { FormEvent, useEffect, useState } from "react";
-
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import useDragAndDrop from "@/app/hooks/useDragAndDrop";
+import ListItem from "@/app/components/list/ListItem";
 import ListCreatorItem from "@/app/components/list/ListCreatorItem";
+import { DragDropContext, Droppable } from "@hello-pangea/dnd";
+import useDragAndDrop from "@/app/hooks/useDragAndDrop";
 
 export default function Home() {
+  const params = useParams();
+  const [openCreateList, setOpenCreateList] = useState(false);
+  
   const tablesProject = useTablesStore((state) => state.project.tables);
   const createNewList = useTablesStore((state) => state.createNewList);
+  const id = useId();
 
-  const params = useParams();
-  const [tables, setTables] = useState(tablesProject);
-
-  const [openCreateList, setOpenCreateList] = useState<boolean>(false);
-  const actualTable = tables.find(
+  const actualTable = tablesProject.find(
     (table) => table.id === params.table
   ) as ITables;
-  
-  const { onDragEnd } = useDragAndDrop({ actualTable, tables, setTables });
+
+  const [orderedList, setOrderedList] = useState(actualTable?.lists);
+  const { onDragEnd } = useDragAndDrop({actualTable, orderedList, setOrderedList})
+
+  useEffect(() => {
+    setOrderedList(actualTable.lists); 
+  }, [actualTable?.lists]);
 
   const handleAddList = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,7 +38,7 @@ export default function Home() {
     if (!list) return;
 
     const newList = {
-      idList: list.replace(/\s/g, "").toLowerCase(),
+      idList: id,
       nameList: list,
       tasks: [],
     };
@@ -44,8 +47,8 @@ export default function Home() {
   };
 
   useEffect(() => {
-    setTables(tablesProject)
-  }, [tablesProject])
+    document.title = actualTable.nameTable + " | Fakello";
+  }, [actualTable?.nameTable]);
 
   if (!params.table || !actualTable) return redirect("/");
 
@@ -58,35 +61,24 @@ export default function Home() {
         {actualTable?.nameTable}
       </header>
 
-      <div className="flex gap-4 mt-10 flex-col lg:flex-row">
+      <div className="flex gap-4 mt-10 flex-row">
         <DragDropContext onDragEnd={onDragEnd}>
-          {actualTable?.lists.map((list, index) => (
-            <Droppable droppableId={String(list.idList)} key={list.idList}>
-              {(provided) => (
-                <div
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  className="w-72 h-full"
-                >
-                  <Draggable
-                    key={list.idList}
-                    draggableId={`draggable${list.idList}`}
-                    index={index}
-                  >
-                    {(provided) => (
-                      <div
-                        {...provided.dragHandleProps}
-                        {...provided.draggableProps}
-                        ref={provided.innerRef}
-                      >
-                        <ListItem list={list}></ListItem>
-                      </div>
-                    )}
-                  </Draggable>
-                </div>
-              )}
-            </Droppable>
-          ))}
+          <Droppable droppableId="lists" type="list" direction="horizontal">
+            {(provided) => (
+              <ul
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                className="flex flex-row gap-4"
+              >
+                {orderedList.map((list, index) => (
+                  <li key={list.idList}>
+                    <ListItem list={list} index={index} />
+                  </li>
+                ))}
+                {provided.placeholder}
+              </ul>
+            )}
+          </Droppable>
         </DragDropContext>
 
         <ListCreatorItem
